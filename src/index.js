@@ -14,8 +14,9 @@ connectDB()
         console.log(`Server is running at port: ${process.env.PORT}`);
     })
 })
-.catch(() => {
-    console.log("MONGODB Db connection failed inside app !!! : ",)
+.catch((error) => {
+    console.log("MONGODB Db connection failed inside app !!! : " , error)
+    throw error;
 })
 
 // function connectDB(){};
