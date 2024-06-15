@@ -30,4 +30,4 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 }
 
-cloudinary.v2.uploader.upload("",{},(error,result) => {console.log(result)})
+export {uploadOnCloudinary}
