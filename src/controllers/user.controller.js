@@ -17,6 +17,7 @@ const generateAccessAndRefreshTokens = async(userId) => {
         return {accessToken, refreshToken}
 
     } catch (error) {
+        console.error("Error generating tokens:", error)
         throw new ApiError(500, "Could not generate access and refresh tokens")
     }
 }
@@ -120,7 +121,7 @@ const loginUser = asyncHandler( async(req , res) => {
     */
 
     const {username, email, password} = req.body;
-    if (!username || !email) {
+    if (!username && !email) {  // or !(email || username)
         throw new ApiError(400, "Username  or Email is required")
     }
 
@@ -135,7 +136,7 @@ const loginUser = asyncHandler( async(req , res) => {
     }
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
-    const loggedInUser = await user.findById(user._id).select("-password -refreshToken")
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
     // apparently when we generated token the "user" reference we had is not the same in this 'loginUser' method so the 
     // refresh token field is empty in this 'user context' and hence we either need to update the refresh token to this user
     // or we need to call tthe database again and remove the unwanted feilds.
