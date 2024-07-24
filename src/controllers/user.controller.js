@@ -167,8 +167,14 @@ const logoutUser = asyncHandler( async(req , res) => {
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $set: {refreshToken: undefined}
+            $unset: {
+                refreshToken: 1
+            }
         },
+        // rather then setting the fiels as 0/undefined/null we can use unset property to remove the field
+        // {
+        //     $set: {refreshToken: undefined}
+        // },
         {
             new: true
         }
@@ -179,7 +185,7 @@ const logoutUser = asyncHandler( async(req , res) => {
         secure: true
     }
 
-    return res.stauts(200)
+    return res.status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {},"Logged Out Succesfully"))
@@ -249,9 +255,9 @@ const changeCurrentPassword = asyncHandler( async(req , res) => {
     )
 })
 
-const getCurrentUser = asyncHandler( async(rez , res) => {
-        return res.status(200
-            .json(new ApiResponse(200 , req.user , "User fetched Successfully"))
+const getCurrentUser = asyncHandler( async(req , res) => {
+        return res.status(200)
+            .json(new ApiResponse(200 , req.user , "User fetched Successfully")
         )
 })
 
@@ -344,7 +350,7 @@ const getUserChannelProfile = asyncHandler( async(req , res) => {
     }
 
     // User.find({username})
-    const channel = User.aggregate([
+    const channel = await User.aggregate([
         {
             $match: {
                 username: username?.toLowerCase()
